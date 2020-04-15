@@ -7,9 +7,9 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import org.embulk.output.jdbc.BatchInsert;
@@ -260,24 +260,24 @@ public class DirectBatchInsert implements BatchInsert
     }
 
     @Override
-    public void setSqlDate(final Instant v, final Calendar calendar) throws IOException, SQLException
+    public void setSqlDate(final Instant v, final ZoneId zone) throws IOException, SQLException
     {
         throw new SQLException("Unsupported");
     }
 
     @Override
-    public void setSqlTime(final Instant v, final Calendar calendar) throws IOException, SQLException
+    public void setSqlTime(final Instant v, final ZoneId zone) throws IOException, SQLException
     {
         throw new SQLException("Unsupported");
     }
 
     @Override
-    public void setSqlTimestamp(final Instant v, final Calendar calendar) throws IOException, SQLException
+    public void setSqlTimestamp(final Instant v, final ZoneId zone) throws IOException, SQLException
     {
         java.sql.Timestamp t = new java.sql.Timestamp(v.toEpochMilli());
         t.setNanos(v.getNano());
         DateFormat format = formats[buffer.getCurrentColumn()];
-        format.setTimeZone(calendar.getTimeZone());
+        format.setTimeZone(java.util.TimeZone.getTimeZone(zone));
         buffer.addValue(format.format(t));
     }
 }
